@@ -2,10 +2,12 @@
 	//External APIs
 	var express = require('express');
 	var bodyParser = require('body-parser');
+	var Datastore = require('nedb');
 
 	var app = express();
 	var http = require('http').Server(app);
 	var io = require('socket.io')(http);
+	var db = new Datastore();
 
 	app.use(bodyParser.json());
 
@@ -15,26 +17,60 @@
 
 	//Routes
 	/*
-		Create a new session
+		Create a new session. Returns a session id to the user. This is id
+		will then be communicated to other users, and will be the name of the
+		socket.io "room" to join.
+
 		@param [type] captainId
-		@param [Object] restaurants
-			@param 
-		@return [Object] retObj
-			@param [string] sessionId
-			@param
+		@param [Array of Objects] restaurants
+			@param [Object]
+				@param [string] restaurantName
+				@param [boolean] veto
+		@return [string] sessionId
 	*/
 	app.post('/session', function (request, response) {
 
-		var sessionId = helper.makeSessionId();
+		if (!helper.createSessionRequestBodyIsValid(request.body)) {
+			response.status(500);
+			response.json({ error: "Create session request body is invalid."});
+			return;
+		}
+
+		var tempSessionId;
+		var foundDocs = [];
+
+		do {
+			//Randomize ID
+			tempSessionId = helper.makeSessionId();
+
+			//Check if a document with the given session id already exists in
+			//the database
+			db.find({ sessionId: tempSessionId}, function (error, documents) {
+				if (!error) {
+					foundDocs = [];	
+				}
+				else {
+					console.log('Database call failed.');
+				}
+			});
+		} while (foundDocs.length > 0);
+
+		var newSession = {
+			sessionId: tempSessionId,
+			captainId: request.body.captainId,
+			restaurants: request.body.restaurants
+		}
 
 
-		return sessionId;
+		response.send(tempSessionId);
 
 	});
 
 
-	app.get('/hello', function (request, response) {
-	    response.send(helper.makeSessionId());
+	//For testing purposes
+	app.post('/hello', function (request, response) {
+
+
 	});
 
 	http.listen(3000, function () {

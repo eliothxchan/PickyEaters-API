@@ -1,4 +1,5 @@
 (function() {
+
 	var makeSessionId = function makeSessionId()
 	{
 	    var text = "";
@@ -10,5 +11,19 @@
 	    return text;
 	}
 
+	var createSessionRequestBodyIsValid = function createSessionRequestBodyIsValid(requestBody) {
+		
+		//Basic sanity check on request body's fields
+		if (requestBody &&
+			requestBody.captainId && 
+			requestBody.captainId !== null && requestBody.captainId !== "" &&
+			requestBody.restaurants && 
+			(requestBody.restaurants instanceof Array) && requestBody.restaurants.length > 1) {
+			return true;
+		}
+		return false;
+	}
+
 	module.exports.makeSessionId = makeSessionId;
+	module.exports.createSessionRequestBodyIsValid = createSessionRequestBodyIsValid
 })();
