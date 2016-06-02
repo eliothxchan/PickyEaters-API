@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/eliothxchan/PickyEaters-API#readme",
   "dependencies": {
-    "express": "^4.13.4"
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
+    "socket.io": "^1.4.6"
   }
 }
