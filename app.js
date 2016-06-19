@@ -16,13 +16,13 @@
 	db.sessions = new Datastore({
 		filename: 'db/sessions.db',
 		autoload: true
-	})
+	});
 
 	app.use(bodyParser.json());
 
 	//Internal APIs
 	var helper = require('./helper');
-	var socket = require('./sockets')(http);
+	var socket = require('./sockets')(http, db);
 
 
 	//Routes
@@ -68,11 +68,13 @@
 		} while (foundDocs.length > 0);
 
 		var newSession = {
-			sessionId: tempSessionId,
+			_id: tempSessionId,
+			started: false,
 			captainId: request.body.captainId,
 			restaurants: request.body.restaurants
 		}
 
+		db.sessions.insert(newSession);
 
 		response.send(tempSessionId);
 
