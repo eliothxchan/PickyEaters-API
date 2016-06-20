@@ -120,6 +120,21 @@
 
 	});
 
+	app.get('/swoog', function(request, response) {
+
+		var newSession = {
+			_id: 'A412C',
+			captainId: "Temp1",
+			started: false,
+			restaurants: ['Aunty\'s Cafe', 'Bhima\'s Warung', 'Mozy Shawarma', 'Frat Burger', 'Vincenzo\'s', 'Menchies',
+			'Booster Juice', 'Pizza Pizza', 'Starbucks', 'Thai Express']
+		};
+
+		db.sessions.insert(newSession);
+		response.send("We gucci");
+
+	});
+
 	//Server Listen
 
 	http.listen(3000, function () {
