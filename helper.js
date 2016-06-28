@@ -25,5 +25,5 @@
 	}
 
 	module.exports.makeSessionId = makeSessionId;
-	module.exports.createSessionRequestBodyIsValid = createSessionRequestBodyIsValid
+	module.exports.createSessionRequestBodyIsValid = createSessionRequestBodyIsValid;
 })();
