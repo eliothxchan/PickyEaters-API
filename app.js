@@ -146,8 +146,23 @@
 
 		socket.on('disconnect', function() {
 
-			var room = getNonIdRoom(socket);
+			//Since a socket automatically leaves the rooms it's part of 
+			//on disconnection, we need to manually determine which database entry
+			//contains the given user and remove them
+			console.log(socket.id + " disconnected.");
+			db.sessions.update({ "users": { $in: [socket.id]}}, {$pull: {"users": socket.id}}, {"returnUpdatedDocs": true}, 
+				function(error, numAffected, affectedDoc) {
+					if (error) {
+						console.log(error);
+					} else {
+						console.log("Num users left: " + affectedDoc.users.length);
+						if (affectedDoc.users.length === 0) {
+							db.sessions.remove({_id: affectedDoc._id});
+						}
+					}
+			});
 
+			/*
 			db.update({_id: room}, {$pull: { users: socket.id }});
 
 			db.find({_id: room}, function(error, docs) {
@@ -157,6 +172,7 @@
 					});
 				}
 			});
+			*/
 
 		});
 
