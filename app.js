@@ -42,7 +42,7 @@
 	});
 
 	//Server Listen (3000 for development)
-	http.listen(3000, function () {
-	    console.log('Server listening on port 3000.');
+	http.listen((process.env.PORT || 80), function () {
+	    console.log('Server listening on port ' + (process.env.PORT || 80));
 	});
 })();
