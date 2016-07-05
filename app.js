@@ -38,7 +38,7 @@
 	});
 
 	//Server Listen (3000 for development)
-	http.listen(1337, function () {
-	    console.log('Server listening on port 3000.');
+	http.listen(80, function () {
+	    console.log('Server listening on port 80.');
 	});
 })();
