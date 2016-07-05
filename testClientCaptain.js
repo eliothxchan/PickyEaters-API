@@ -28,16 +28,35 @@
 			imageUrl: 'www.thegrill.com',
 			distance: 2.5,
 			veteod: false
+		},
+		{
+			id: 'def',
+			name: 'Vegetarian Fast Food Restaurant',
+			phone: '416-333-3333',
+			rating: 4.0,
+			address: '20 University Ave',
+			description: 'Vegetarian',
+			imageUrl: 'www.veggiefastfood.com',
+			distance: 2,
+			veteod: false			
 		}
 	]);
 
 	socket.on('created', function(sessionId) {
 		console.log('Created with session id ' + sessionId);
-		socket.disconnect();
 	});	
 
 	socket.on('joined', function(numUsers) {
 		console.log('A user joined the room. Room is now at ' + numUsers + ' users.');
+		socket.emit('start');
+	});
+
+	socket.on('started', function(numVetos) {
+		console.log('Captain has been allocated ' + numVetos + 'vetoes.');
+	});
+
+	socket.on('finished', function() {
+		socket.disconnect();
 	});
 
 

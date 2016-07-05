@@ -35,53 +35,59 @@
 			
 			console.log(socket.id + ' is attempting to join room ' + room + '.');
 
-			var sessions;
-			var newUser = {};
+			var session;
 
-			var session = db.getById(room)[0];
-			if (!session.started && session.users.length < session.maxUsers) {
+			db.getById(room, function(error, docs) {
+				if (!error) {
+					session = docs[0];
+					if (!session.started && session.users.length < session.maxUsers) {
 
-				db.addUserToSession(socket.id, room);
+						db.addUserToSession(socket.id, room, function(success) {
+							if (success) {
+								socketEmitter.emit(socket.id, 'joined', session.restaurants);
+								socketEmitter.emit(session.captainId, 'joined', io.sockets.adapter.rooms[room].length + 1);
+								console.log(socket.id + ' has joined room ' + room + '.');
+							}
+						});
+					} else {
+						console.log('Session ' + room + ' has already begun or is full and cannot be joined.');
+					}					
+				}
 
-				socketEmitter.emit(socket.id, 'joined', session.restaurants);
-				socketEmitter.emit(session.captainId, 'joined', io.sockets.adapter.rooms[room].length);
-				console.log(socket.id + ' has joined room ' + room + '.');
-			} else {
-				console.log('Session ' + room + ' has already begun or is full and cannot be joined.');
-			}
+			});
+
 		};
 
 		module.handleStartSession = function handleStartSession(socket) {
+			
+			console.log(socket.id + ' is attempting to start its session.');
 
+			var room = helper.getNonIdRoom(socket);
+
+			db.assignVotesAndStartSession(room, function(updatedUsersArray) {
+				console.log('Session has started.');
+				for (var i = 0; i < updatedUsersArray.length; i++) {
+					socketEmitter.emit(updatedUsersArray[i].id, 'started', updatedUsersArray[i].votesAssigned);
+				}
+			});
 		};
 
 		
 		module.handleVeto = function handleVeto(socket, restaurantName) {
+			
 			var room = getNonIdRoom(socket);
 
-			/*
-			db.update({ _id: room }, { $set: {restaurants: }})
-
-			db.find({_id: room}, function(error, docs) {
-
-				if (!error) {
-
-					var newRestaurantList = docs[0].restaurants;
-					newRestList.splice(newRestList.indexOf(restaurant), 1);
-
-					db.sessions.update({ _id: room }, { $set: {restaurants: newRestList}}, {}, function(error) {
-						if (!error) {
-							if (newRestList.length > 1) {
-								io.to(room).emit('vetoed', newRestList);
-							}
-							else if (newRestList.length === 1) {
-								io.to(room).emit('finished', newRestList[0]);
-							}
-						}
-					});
+			db.vetoRestaurant(userId, room, restaurantName, function(errorMessage, numLeft) {
+				if (!errorMessage) {
+					socketEmitter.emit(room, "vetoed", restaurantName);
+					if (numLeft === 1) {
+						socketEmitter.emit(room, "finished");
+					}
+				}
+				else if (errorMessage === "Already veteod") {
+					socketEmitter.emit(socket.id, 'alreadyVetoed', restaurantName);
 				}
 			});
-			*/
 		};
 		
 

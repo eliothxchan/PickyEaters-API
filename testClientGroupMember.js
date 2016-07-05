@@ -6,30 +6,19 @@
 	var restaurantList = [];
 
 	console.log('Group Member joining the room.');
-	socket.emit('join', 'A412C');
+	socket.emit('join', '4ph5');
 
-	socket.on('joined', function(room, restaurants, users) {
-		restaurantList = restaurants;
-		console.log('Group Member has joined room ' + room + '. Restaurants have been updated.');
-		console.log('Restaurant list: ' + restaurantList);
+	socket.on('joined', function(restaurants) {
+		console.log('Group Member has joined the room.');
+		console.log('Restaurant list: ' + restaurants);
 	});
 
-	socket.on('vetoed', function(remainingRestaurants) {
-		console.log('Veto received. Restaurants have been updated.');
-		restaurantList = remainingRestaurants;
-		console.log('Restaurant list: ' + restaurantList);
-
-		if (restaurantList.length % 2 === 1 && restaurantList.length !== 1) {
-			console.log('Group Member is deciding what to veto.');
-			var item = restaurantList[Math.floor(Math.random()*restaurantList.length)];
-			console.log('Group Member has decided to veto ' + item + '.');
-			socket.emit('veto', item);			
-		}
-
+	socket.on('started', function(numVetos) {
+		console.log('Group Member has been assigned ' + numVetos + ' vetoes.');
 	});
 
-	socket.on('finished', function(restaurant) {
-		console.log('Veto process has complete. The group has chosen ' + restaurant + '.');
+	socket.on('finished', function() {
+
 	});
 
 })();

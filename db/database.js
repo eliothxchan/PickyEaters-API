@@ -17,13 +17,29 @@
 		});
 	};
 
+	var checkIfCanVeto = function checkIfCanVeto(id, sessionId, callback) {
+		var session;
+
+		db.find({_id: sessionId}, function (error, docs) {
+			if (!error) {
+				session = docs[0];
+
+				for (var i = 0; i < session.users.length; i++) {
+					if (session.users[i].id === id) {
+						callback(session.users[i].votesUsed < session.users[i].votesAssigned);
+					}
+				}
+			}
+		});
+	};
+
 	//Modifiers
 	var insertNewSession = function insert(roomId, captId, restaurantData) {
 		var newSession = {
 			_id: roomId,
 			captainId: captId,
 			restaurants: restaurantData,
-			maxUsers: restaurantData.length,
+			maxUsers: restaurantData.length-1,
 			started: false,
 			users: [{
 				id: captId,
@@ -35,14 +51,143 @@
 		db.insert(newSession);
 	};
 
-	var addUserToSession = function addUserToSession(userId, sessionId) {
+	var addUserToSession = function addUserToSession(userId, sessionId, callback) {
 
 		var newUser = {
-			id: socket.id,
+			id: userId,
 			votesUsed: 0,
 			votesAssigned: 0
-		}
-		db.update({_id: sessionId}, {$push: {"users": newUser} });
+		};
+
+		db.update({_id: sessionId}, {$push: {"users": newUser} }, {}, function(error, numAffected) {
+			if (!error && numAffected === 1) {
+				callback(true);
+			}
+			else {
+				console.log(error);
+				callback(false);
+			}
+		});
+
+	};
+
+	var vetoRestaurant = function vetoRestaurant(userId, sessionId, restaurantName, callback) {
+		var session;
+		var updatedRestaurants;
+		var numberOfRestaurantsLeft = 0;
+
+		checkIfCanVeto(userId, sessionId, function(canVeto) {
+			if (canVeto) {
+				db.find({_id: sessionId}, function (error, docs) {
+					if (!error) {
+						session = docs[0];
+						updatedRestaurants = session.restaurants;
+
+						for (var i = 0; i < updatedRestaurants.length; i++) {
+							if (updatedRestaurants[i].name === restaurantName) {
+								updatedRestaurants[i].veteod = true;
+							}
+							if (updatedRestaurants[i].veteod === false) {
+								numberOfRestaurantsLeft++;
+							}
+						}
+
+						db.update({_id: sessionId}, {$set: {restaurants: updatedRestaurants}}, {}, function(error, numAffected) {
+							if (numAffected === 0) {
+								callback("Already vetoed");
+							}
+							else if (numAffected === 1) {
+								callback(null, numberOfRestaurantsLeft);
+							}
+						});
+
+					}
+					else {
+						console.log(error);
+					}
+				});
+			}
+		});
+
+	};
+
+	var incrementUserUsedVotes = function incrementUserUsedVotes(userId, sessionId) {
+		
+		var session;
+		var updatedUserArray = [];
+
+		db.find({_id: sessionId}, function(error, docs) {
+			if (!error) {
+				session = docs[0];
+
+				for (var i = 0; i < session.users.length; i++) {
+					if (session.users[i].id === userId) {
+						updatedUserArray.push({
+							id: session.users[i].id,
+							votesUsed: session.users[i].votesUsed + 1,
+							votesAssigned: session.users[i].votesAssigned
+						});
+					}
+					else {
+						updatedUserArray.push(session.users[i]);
+					}
+				}
+
+				db.update({_id: sessionId}, {$set: {"users": updatedUserArray}});
+			}
+			else {
+				console.log(error);
+			}
+		});
+	};
+
+	var assignVotesAndStartSession = function assignVotesAndStartSession(sessionId, callback) {
+
+		var session;
+		var totalVotes;
+		var updatedUserArray = [];
+		var voteCount = 0;
+		var i = 0;
+		var newUserObj = {};
+
+		db.find({ _id: sessionId}, function(error, docs) {
+			if (!error) {
+				session = docs[0];
+				totalVotes = session.maxUsers;
+				updatedUserArray = session.users;
+
+				while (voteCount !== totalVotes) {
+					if (i === session.users.length) {
+						i = 0;
+					} 
+					newUserObj.id = updatedUserArray[i].id;
+					newUserObj.votesUsed = 0;
+					newUserObj.votesAssigned = updatedUserArray[i].votesAssigned + 1;
+
+					updatedUserArray[i] = newUserObj;
+					i++;
+					voteCount++;
+					newUserObj = {};
+				}
+
+				for (var j = 0; j < updatedUserArray.length; j++) {
+					console.log(updatedUserArray[j].id + ' has been assigned ' + updatedUserArray[j].votesAssigned + ' votes.');
+				}
+
+				db.update({_id: sessionId}, {$set: {"users": updatedUserArray, "started": true}}, {}, function(error) {
+					if (!error) {
+						callback(updatedUserArray);
+					}
+					else {
+						console.log(error);
+					}
+				});
+
+			}
+			else {
+				console.log(error);
+			}
+		});
 
 	};
 
@@ -95,6 +240,8 @@
 		getById: getById,
 		insertNewSession: insertNewSession,
 		addUserToSession: addUserToSession,
+		assignVotesAndStartSession: assignVotesAndStartSession,
+		vetoRestaurant: vetoRestaurant,
 		removeUserFromSessions: removeUserFromSessions
 	};
 
