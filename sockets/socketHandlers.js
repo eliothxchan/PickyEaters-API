@@ -52,7 +52,7 @@
 							}
 						});
 					} else {
-						console.log('Session ' + room + ' has already begun.');
+						console.log('Session ' + room + ' has already begun and cannot be joined.');
 					}					
 				}
 
