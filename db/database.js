@@ -58,7 +58,7 @@
 
 	var addRestaurantsToSession = function addRestaurantsToSession(sessionId, restaurantData, callback) {
 
-		db.update({_id: sessionId}, {$set: {"restaurantData": restaurantData}}, {},
+		db.update({_id: sessionId}, {$set: {"restaurants": restaurantData}}, {},
 			function(error, numAffected) {
 				if (!error && numAffected === 1) {
 					callback(true);
