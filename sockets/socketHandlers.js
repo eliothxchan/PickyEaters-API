@@ -23,7 +23,7 @@
 
 			} while (sessions.length !== 0);	
 
-			db.insertNewSession(tempSessionId, socket.id, restaurantData);
+			db.insertNewSession(tempSessionId, socket.id);
 			socket.join(tempSessionId);
 
 			socketEmitter.emit(socket.id, 'created', tempSessionId);
