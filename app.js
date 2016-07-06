@@ -43,6 +43,6 @@
 	//Server Listen (3000 for development)
 	//http.listen(3000, function() {
 	http.listen((process.env.PORT || 3000), function () {
-	    console.log('Server listening on port' + process.env.PORT);
+	    console.log('Server listening on IP' + process.env.IP + ' and port ' + process.env.PORT);
 	});
 })();
