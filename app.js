@@ -23,7 +23,8 @@
 		});
 
 		socket.on('start', function(restaurantData) {
-			socketEventHandlers.handleStartSession(socket, restaurantData);
+
+			socketEventHandlers.handleStartSession(socket, JSON.parse(restaurantData));
 		});
 
 		socket.on('veto', function(restaurantName) {
