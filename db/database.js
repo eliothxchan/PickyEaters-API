@@ -177,7 +177,7 @@
 		var i = 0;
 		var newUserObj = {};
 
-		addUserToSession(sessionId, restaurantData, function(restaurantsAdded) {
+		addRestaurantsToSession(sessionId, restaurantData, function(restaurantsAdded) {
 			if (restaurantsAdded) {
 				getById(sessionId, function(error, doc) {
 					if (!error) {
