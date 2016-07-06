@@ -12,7 +12,9 @@
 
 		db.find({ _id: id}, function (error, docs) {
 			if (!error) {
-				callback(null, docs);	
+				if (docs && docs.length === 1) {
+					callback(null, docs[0]);
+				}	
 			} 
 			else {
 				console.log('Error in finding session with id ' + id);
@@ -24,19 +26,15 @@
 	var checkIfCanVeto = function checkIfCanVeto(id, sessionId, callback) {
 		var session;
 
-		db.find({_id: sessionId}, function (error, docs) {
+		getById(sessionId, function (error, doc) {
 			if (!error) {
-				session = docs[0];
+				session = doc;
 
 				for (var i = 0; i < session.users.length; i++) {
 					if (session.users[i].id === id) {
 						callback(session.users[i].votesUsed < session.users[i].votesAssigned);
 					}
 				}
-			}
-			else {
-				console.log('Error in finding session with id ' + id);
-				console.log(error);
 			}
 		});
 	};
@@ -101,9 +99,9 @@
 
 		checkIfCanVeto(userId, sessionId, function(canVeto) {
 			if (canVeto) {
-				db.find({_id: sessionId}, function (error, docs) {
+				getById(sessionId, function (error, doc) {
 					if (!error) {
-						session = docs[0];
+						session = doc;
 						updatedRestaurants = session.restaurants;
 
 						for (var i = 0; i < updatedRestaurants.length; i++) {
@@ -131,10 +129,6 @@
 						});
 
 					}
-					else {
-						console.log('Could not find session ' + sessionId);
-						console.log(error);
-					}
 				});
 			}
 			else {
@@ -149,9 +143,9 @@
 		var session;
 		var updatedUserArray = [];
 
-		db.find({_id: sessionId}, function(error, docs) {
+		getById(sessionId, function(error, doc) {
 			if (!error) {
-				session = docs[0];
+				session = doc;
 
 				for (var i = 0; i < session.users.length; i++) {
 					if (session.users[i].id === userId) {
@@ -185,9 +179,9 @@
 
 		db.addUserToSession(sessionId, restaurantData, function(restaurantsAdded) {
 			if (restaurantsAdded) {
-				db.find({ _id: sessionId}, function(error, docs) {
+				getById(sessionId, function(error, doc) {
 					if (!error) {
-						session = docs[0];
+						session = doc;
 						totalVotes = session.restaurants.length-1;
 						updatedUserArray = session.users;
 

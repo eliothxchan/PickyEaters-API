@@ -12,16 +12,18 @@
 			console.log(socket.id + ' is attempting to creating a room.');
 
 			var tempSessionId;
-			var sessions = [];
+			var session;
 			var newSession = {};
 
 			do {
 				tempSessionId = helper.makeSessionId();
 				db.getById(tempSessionId, function(error, docs) {
-					sessions = docs[0];
+					if (!error) {
+						session = doc;
+					}
 				});
 
-			} while (sessions.length !== 0);	
+			} while (!session);	
 
 			db.insertNewSession(tempSessionId, socket.id);
 			socket.join(tempSessionId);
@@ -37,9 +39,9 @@
 
 			var session;
 
-			db.getById(room, function(error, docs) {
+			db.getById(room, function(error, doc) {
 				if (!error) {
-					session = docs[0];
+					session = doc;
 					if (!session.started) {
 
 						db.addUserToSession(socket.id, room, function(success) {
