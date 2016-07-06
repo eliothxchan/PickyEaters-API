@@ -69,7 +69,7 @@
 			db.assignVotesAndStartSession(room, restaurantData, function(updatedUsersArray, restaurants) {
 				console.log('Session has started.');
 				for (var i = 0; i < updatedUsersArray.length; i++) {
-					socketEmitter.emit(updatedUsersArray[i].id, 'started', updatedUsersArray[i].votesAssigned, restaurants);
+					socketEmitter.emitStartedToUser(updatedUsersArray[i].id, updatedUsersArray[i].votesAssigned, restaurants);
 				}
 			});
 		};
