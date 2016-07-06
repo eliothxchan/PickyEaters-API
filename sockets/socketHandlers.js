@@ -23,7 +23,7 @@
 					}
 				});
 
-			} while (!session);	
+			} while (session);	
 
 			db.insertNewSession(tempSessionId, socket.id);
 			socket.join(tempSessionId);
