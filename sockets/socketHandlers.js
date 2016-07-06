@@ -40,7 +40,7 @@
 			db.getById(room, function(error, docs) {
 				if (!error) {
 					session = docs[0];
-					if (!session.started && session.users.length < session.maxUsers) {
+					if (!session.started) {
 
 						db.addUserToSession(socket.id, room, function(success) {
 							if (success) {
@@ -50,7 +50,7 @@
 							}
 						});
 					} else {
-						console.log('Session ' + room + ' has already begun or is full and cannot be joined.');
+						console.log('Session ' + room + ' has already begun.');
 					}					
 				}
 
@@ -58,13 +58,13 @@
 
 		};
 
-		module.handleStartSession = function handleStartSession(socket) {
+		module.handleStartSession = function handleStartSession(socket, restaurantData) {
 			
 			console.log(socket.id + ' is attempting to start its session.');
 
 			var room = helper.getNonIdRoom(socket);
 
-			db.assignVotesAndStartSession(room, function(updatedUsersArray) {
+			db.assignVotesAndStartSession(room, restaurantData, function(updatedUsersArray) {
 				console.log('Session has started.');
 				for (var i = 0; i < updatedUsersArray.length; i++) {
 					socketEmitter.emit(updatedUsersArray[i].id, 'started', updatedUsersArray[i].votesAssigned);

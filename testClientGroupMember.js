@@ -15,6 +15,11 @@
 
 	socket.on('started', function(numVetos) {
 		console.log('Group Member has been assigned ' + numVetos + ' vetoes.');
+		socket.emit('veto', 'Kismet');
+	});
+
+	socket.on('vetoed', function(restaurantVetoed) {
+		console.log(restaurantVetoed + ' has been veteod.');
 	});
 
 	socket.on('finished', function() {

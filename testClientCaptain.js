@@ -2,7 +2,8 @@
 	
 	console.log("Test Client 1: Captain Starting");
 	var client = require('socket.io-client');
-	var socket = client.connect('http://localhost:3000');
+	var socket = client.connect('http://localhost');
+	//var socket = client.connect('http://pickyeaters.azurewebsites.net:80');
 	var restaurantList = [];
 
 	console.log('Captain joining the room.');
@@ -52,7 +53,8 @@
 	});
 
 	socket.on('started', function(numVetos) {
-		console.log('Captain has been allocated ' + numVetos + 'vetoes.');
+		console.log('Captain has been allocated ' + numVetos + ' vetoes.');
+
 	});
 
 	socket.on('finished', function() {

@@ -22,13 +22,12 @@
 			socketEventHandlers.handleJoinSession(socket, room);
 		});
 
-		socket.on('start', function() {
-			socketEventHandlers.handleStartSession(socket);
+		socket.on('start', function(restaurantData) {
+			socketEventHandlers.handleStartSession(socket, restaurantData);
 		});
 
 		socket.on('veto', function(restaurantName) {
 			socketEventHandlers.handleVeto(socket, restaurantName);
-
 		});
 
 		socket.on('disconnect', function() {
@@ -42,7 +41,8 @@
 	});
 
 	//Server Listen (3000 for development)
-	http.listen((process.env.PORT || 80), function () {
-	    console.log('Server listening on port ' + (process.env.PORT || 80));
+	http.listen(3000, function() {
+	//http.listen((process.env.PORT || 80), function () {
+	    console.log('Server listening on port 3000');
 	});
 })();
