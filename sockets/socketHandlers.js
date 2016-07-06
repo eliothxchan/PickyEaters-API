@@ -17,7 +17,7 @@
 
 			do {
 				tempSessionId = helper.makeSessionId();
-				db.getById(tempSessionId, function(error, docs) {
+				db.getById(tempSessionId, function(error, doc) {
 					if (!error) {
 						session = doc;
 					}
