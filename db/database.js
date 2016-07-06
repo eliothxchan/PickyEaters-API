@@ -39,7 +39,6 @@
 			_id: roomId,
 			captainId: captId,
 			restaurants: [],
-			maxUsers: 0,
 			started: false,
 			users: [{
 				id: captId,
@@ -53,7 +52,7 @@
 
 	var addRestaurantsToSession = function addRestaurantsToSession(sessionId, restaurantData, callback) {
 
-		db.update({_id: sessionId}, {$set: {"restaurantData": restaurantData, maxUsers: restaurantData.length - 1}}, {},
+		db.update({_id: sessionId}, {$set: {"restaurantData": restaurantData}}, {},
 			function(error, numAffected) {
 				if (!error && numAffected === 1) {
 					callback(true);
@@ -61,7 +60,7 @@
 				else {
 					callback(false);
 				}
-			};
+			}
 		);
 	};
 
@@ -169,7 +168,7 @@
 				db.find({ _id: sessionId}, function(error, docs) {
 					if (!error) {
 						session = docs[0];
-						totalVotes = session.maxUsers;
+						totalVotes = session.restaurants.length-1;
 						updatedUserArray = session.users;
 
 						while (voteCount !== totalVotes) {
