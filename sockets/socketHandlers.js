@@ -7,7 +7,7 @@
 		var helper = require('.././helper');
 		var db = require('../db/database');
 
-		module.handleCreateSession = function handleCreateSession(socket, restaurantData) {
+		module.handleCreateSession = function handleCreateSession(socket) {
 		
 			console.log(socket.id + ' is attempting to creating a room.');
 

@@ -13,6 +13,10 @@
 		db.find({ _id: id}, function (error, docs) {
 			if (!error) {
 				callback(null, docs);	
+			} 
+			else {
+				console.log("Error in finding session with id "+ id);
+				console.log(error);
 			}
 		});
 	};
@@ -29,6 +33,9 @@
 						callback(session.users[i].votesUsed < session.users[i].votesAssigned);
 					}
 				}
+			}
+			else {
+
 			}
 		});
 	};

@@ -13,8 +13,8 @@
 		console.log(socket.id + ' has connected.');
 
 
-		socket.on('createSession', function(restaurantData) {
-			socketEventHandlers.handleCreateSession(socket, restaurantData);
+		socket.on('createSession', function() {
+			socketEventHandlers.handleCreateSession(socket);
 		});
 
 		
