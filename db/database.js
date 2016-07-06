@@ -15,7 +15,7 @@
 				callback(null, docs);	
 			} 
 			else {
-				console.log("Error in finding session with id "+ id);
+				console.log('Error in finding session with id ' + id);
 				console.log(error);
 			}
 		});
@@ -35,7 +35,8 @@
 				}
 			}
 			else {
-
+				console.log('Error in finding session with id ' + id);
+				console.log(error);
 			}
 		});
 	};
@@ -65,6 +66,8 @@
 					callback(true);
 				}
 				else {
+					console.log('Could not update session ' + sessionId + ' with the given restaurants.');
+					console.log(error);
 					callback(false);
 				}
 			}
@@ -113,19 +116,29 @@
 						}
 
 						db.update({_id: sessionId}, {$set: {restaurants: updatedRestaurants}}, {}, function(error, numAffected) {
-							if (numAffected === 0) {
-								callback("Already vetoed");
+							if (!error) {
+								if (numAffected === 0) {
+									callback("Already vetoed");
+								}
+								else if (numAffected === 1) {
+									callback(null, numberOfRestaurantsLeft);
+								}
 							}
-							else if (numAffected === 1) {
-								callback(null, numberOfRestaurantsLeft);
+							else {
+								console.log('Could not update session ' + sessionId + ' after vetoing ' + restaurantName);
+								console.log(error);
 							}
 						});
 
 					}
 					else {
+						console.log('Could not find session ' + sessionId);
 						console.log(error);
 					}
 				});
+			}
+			else {
+				console.log('User ' + userId + ' has used all their vetos and can no longer vote.');
 			}
 		});
 
@@ -233,30 +246,36 @@
 			return foundUserId;
 		}}, function (error, docs) {
 			if (!error) {
-				session = docs[0];
+				if (docs.length === 1) {
+					session = docs[0];
 
-				for (var i = 0; i < session.users.length; i++) {
-					if (session.users[i].id !== userId) {
-						updatedSessionUsers.push(session.users[i]);
+					for (var i = 0; i < session.users.length; i++) {
+						if (session.users[i].id !== userId) {
+							updatedSessionUsers.push(session.users[i]);
+						}
 					}
-				}
 
-				db.update({_id: session._id}, {$set: {"users": updatedSessionUsers}}, {"returnUpdatedDocs" : true}, 
-					function(error, numAffected, affectedDoc) {
-						if (!error && numAffected === 1) {
-							if (affectedDoc.users.length === 0) {
-								console.log('Room ' + affectedDoc._id + ' has no more users and will be removed.');
-								db.remove({_id: affectedDoc._id});
+					db.update({_id: session._id}, {$set: {"users": updatedSessionUsers}}, {"returnUpdatedDocs" : true}, 
+						function(error, numAffected, affectedDoc) {
+							if (!error && numAffected === 1) {
+								if (affectedDoc.users.length === 0) {
+									console.log('Room ' + affectedDoc._id + ' has no more users and will be removed.');
+									db.remove({_id: affectedDoc._id});
+								}
+							}
+							else {
+								console.log('Error removing user from session after disconnect.');
+								console.log(error);
 							}
 						}
-						else {
-							console.log('Error removing user from session after disconnect.');
-							console.log(error);
-						}
-					}
-				);
+					);
+				}
+				else {
+					console.log('User ' + userId + ' is not in any active sessions.');
+				}
 			}
 			else {
+				console.log('Error in finding sessions with userId ' + userId + '.');
 				console.log(error);
 			}
 		});
