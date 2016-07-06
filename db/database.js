@@ -176,6 +176,7 @@
 		var voteCount = 0;
 		var i = 0;
 		var newUserObj = {};
+		var restaurants;
 
 		addRestaurantsToSession(sessionId, restaurantData, function(restaurantsAdded) {
 			if (restaurantsAdded) {
@@ -184,6 +185,7 @@
 						session = doc;
 						totalVotes = session.restaurants.length-1;
 						updatedUserArray = session.users;
+						restaurants = session.restaurants;
 
 						while (voteCount !== totalVotes) {
 							if (i === session.users.length) {
@@ -205,7 +207,7 @@
 
 						db.update({_id: sessionId}, {$set: {"users": updatedUserArray, "started": true}}, {}, function(error) {
 							if (!error) {
-								callback(updatedUserArray);
+								callback(updatedUserArray, restaurants);
 							}
 							else {
 								console.log(error);

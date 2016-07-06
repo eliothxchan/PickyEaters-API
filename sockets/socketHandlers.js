@@ -46,7 +46,7 @@
 
 						db.addUserToSession(socket.id, room, function(success) {
 							if (success) {
-								socketEmitter.emit(socket.id, 'joined', session.restaurants);
+								socketEmitter.emit(socket.id, 'joined');
 								socketEmitter.emit(session.captainId, 'joined', io.sockets.adapter.rooms[room].length + 1);
 								console.log(socket.id + ' has joined room ' + room + '.');
 							}
@@ -66,10 +66,10 @@
 
 			var room = helper.getNonIdRoom(socket);
 
-			db.assignVotesAndStartSession(room, restaurantData, function(updatedUsersArray) {
+			db.assignVotesAndStartSession(room, restaurantData, function(updatedUsersArray, restaurants) {
 				console.log('Session has started.');
 				for (var i = 0; i < updatedUsersArray.length; i++) {
-					socketEmitter.emit(updatedUsersArray[i].id, 'started', updatedUsersArray[i].votesAssigned);
+					socketEmitter.emit(updatedUsersArray[i].id, 'started', updatedUsersArray[i].votesAssigned, restaurants);
 				}
 			});
 		};
