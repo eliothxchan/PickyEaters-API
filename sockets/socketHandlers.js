@@ -81,7 +81,7 @@
 			
 			var room = helper.getNonIdRoom(socket);
 
-			db.vetoRestaurant(userId, room, restaurantName, function(errorMessage) {
+			db.vetoRestaurant(socket.id, room, restaurantName, function(errorMessage) {
 				if (!errorMessage) {
 					socketEmitter.emit(room, "vetoed", restaurantName);
 				}
