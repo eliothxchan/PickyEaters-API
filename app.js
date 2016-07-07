@@ -16,7 +16,6 @@
 		socket.on('createSession', function() {
 			socketEventHandlers.handleCreateSession(socket);
 		});
-
 		
 		socket.on('join', function(room) {
 			socketEventHandlers.handleJoinSession(socket, room);

@@ -50,7 +50,7 @@
 								if (socket.id !== session.captainId) {
 									socketEmitter.emit(socket.id, 'joined');
 								}
-								socketEmitter.emit(session.captainId, 'joined', io.sockets.adapter.rooms[room].length + 1);
+								socketEmitter.emit(session.captainId, 'joined', io.sockets.adapter.rooms[room].length);
 								console.log(socket.id + ' has joined room ' + room + '.');
 							}
 						});
