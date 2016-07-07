@@ -116,7 +116,7 @@
 									callback("Already vetoed");
 								}
 								else if (numAffected === 1) {
-									callback(null, numberOfRestaurantsLeft);
+									callback(null);
 								}
 							}
 							else {
