@@ -79,13 +79,17 @@
 		
 		module.handleVeto = function handleVeto(socket, restaurantName) {
 			
+			console.log(socket.id + ' is attempting to veto ' + restaurantName);
+
 			var room = helper.getNonIdRoom(socket);
 
 			db.vetoRestaurant(socket.id, room, restaurantName, function(errorMessage) {
 				if (!errorMessage) {
+					console.log(socket.id + ' vetoed ' + restaurantName + ' successfully.');
 					socketEmitter.emit(room, "vetoed", restaurantName);
 				}
 				else if (errorMessage === "Already veteod") {
+					console.log(socket.id + ' tried to veto ' + restaurantName + ' but it was already vetoed.');
 					socketEmitter.emit(socket.id, 'alreadyVetoed', restaurantName);
 				}
 			});
