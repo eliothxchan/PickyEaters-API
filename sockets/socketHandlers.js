@@ -83,14 +83,16 @@
 
 			var room = helper.getNonIdRoom(socket);
 
-			db.vetoRestaurant(socket.id, room, restaurantName, function(errorMessage) {
-				if (!errorMessage) {
-					console.log(socket.id + ' vetoed ' + restaurantName + ' successfully.');
-					socketEmitter.emit(room, "vetoed", restaurantName);
-				}
-				else if (errorMessage === "Already veteod") {
-					console.log(socket.id + ' tried to veto ' + restaurantName + ' but it was already vetoed.');
-					socketEmitter.emit(socket.id, 'alreadyVetoed', restaurantName);
+			db.vetoRestaurant(socket.id, room, restaurantName, function(worked, users) {
+				console.log(socket.id + ' vetoed ' + restaurantName + ' successfully.');
+
+				for (var i = 0; i < users.length; i++) {
+					if (users[i].id === socket.id) {
+						socketEmitter.emitVetoToUser(socket.id, worked, restaurantName);
+					}
+					else {
+						socketEmitter.emitVetoToUser(users[i].id, false, restaurantName);
+					}
 				}
 			});
 		};

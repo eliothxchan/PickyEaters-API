@@ -12,6 +12,10 @@
 			io.to(userId).emit('started', votes, restaurants);
 		};
 
+		module.emitVetoToUser = function emitVetoToUser(userId, voteCounted, restaurant) {
+			io.to(userId).emit('vetoed', voteCounted, restaurant);
+		};
+
 		module.emitError = function emitError(room, data) {
 			io.to(room).emit('error', data);
 		};

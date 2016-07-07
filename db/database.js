@@ -113,10 +113,10 @@
 						db.update({_id: sessionId}, {$set: {restaurants: updatedRestaurants}}, {}, function(error, numAffected) {
 							if (!error) {
 								if (numAffected === 0) {
-									callback("Already vetoed");
+									callback(false, session.users);
 								}
 								else if (numAffected === 1) {
-									callback(null);
+									callback(true, session.users);
 								}
 							}
 							else {
