@@ -46,6 +46,7 @@
 
 						db.addUserToSession(socket.id, room, function(success) {
 							if (success) {
+								socket.join(room);
 								if (socket.id !== session.captainId) {
 									socketEmitter.emit(socket.id, 'joined');
 								}
