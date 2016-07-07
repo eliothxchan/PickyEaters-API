@@ -46,7 +46,9 @@
 
 						db.addUserToSession(socket.id, room, function(success) {
 							if (success) {
-								socketEmitter.emit(socket.id, 'joined');
+								if (socket.id !== session.captainId) {
+									socketEmitter.emit(socket.id, 'joined');
+								}
 								socketEmitter.emit(session.captainId, 'joined', io.sockets.adapter.rooms[room].length + 1);
 								console.log(socket.id + ' has joined room ' + room + '.');
 							}
@@ -79,12 +81,9 @@
 			
 			var room = getNonIdRoom(socket);
 
-			db.vetoRestaurant(userId, room, restaurantName, function(errorMessage, numLeft) {
+			db.vetoRestaurant(userId, room, restaurantName, function(errorMessage) {
 				if (!errorMessage) {
 					socketEmitter.emit(room, "vetoed", restaurantName);
-					if (numLeft === 1) {
-						socketEmitter.emit(room, "finished");
-					}
 				}
 				else if (errorMessage === "Already veteod") {
 					socketEmitter.emit(socket.id, 'alreadyVetoed', restaurantName);

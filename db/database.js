@@ -95,7 +95,6 @@
 	var vetoRestaurant = function vetoRestaurant(userId, sessionId, restaurantName, callback) {
 		var session;
 		var updatedRestaurants;
-		var numberOfRestaurantsLeft = 0;
 
 		checkIfCanVeto(userId, sessionId, function(canVeto) {
 			if (canVeto) {
@@ -107,9 +106,7 @@
 						for (var i = 0; i < updatedRestaurants.length; i++) {
 							if (updatedRestaurants[i].name === restaurantName) {
 								updatedRestaurants[i].veteod = true;
-							}
-							if (updatedRestaurants[i].veteod === false) {
-								numberOfRestaurantsLeft++;
+								break;
 							}
 						}
 
