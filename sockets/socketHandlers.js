@@ -79,7 +79,7 @@
 		
 		module.handleVeto = function handleVeto(socket, restaurantName) {
 			
-			var room = getNonIdRoom(socket);
+			var room = helper.getNonIdRoom(socket);
 
 			db.vetoRestaurant(userId, room, restaurantName, function(errorMessage) {
 				if (!errorMessage) {
