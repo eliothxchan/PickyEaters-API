@@ -11,19 +11,6 @@
 	    return text;
 	}
 
-	var createSessionRequestBodyIsValid = function createSessionRequestBodyIsValid(requestBody) {
-		
-		//Basic sanity check on request body's fields
-		if (requestBody &&
-			requestBody.captainId && 
-			requestBody.captainId !== null && requestBody.captainId !== "" &&
-			requestBody.restaurants && 
-			(requestBody.restaurants instanceof Array) && requestBody.restaurants.length > 1) {
-			return true;
-		}
-		return false;
-	}
-
 	var getNonIdRoom = function getNonIdRooms(socket) {
 		//Since all sockets join a room with their particular id on connection
 		//we want to get back the singular room they are in that is not the one
@@ -49,7 +36,6 @@
 
 	module.exports = {
 		makeSessionId: makeSessionId,
-		createSessionRequestBodyIsValid: createSessionRequestBodyIsValid,
 		getNonIdRoom: getNonIdRoom
 	};
 	

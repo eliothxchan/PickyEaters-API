@@ -35,10 +35,6 @@
 
 	});
 
-	app.get('/', function(request, response) {
-		response.send('Hello world!');
-	});
-
 	//Server Listen (3000 for development)
 	//http.listen(3000, function() {
 	http.listen((process.env.PORT || 3000), function () {
