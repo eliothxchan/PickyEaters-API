@@ -1,9 +1,16 @@
 # PickyEaters
 
-This project uses npm. To install necessary dependencies, use "npm install".
+The back-end of the Picky Eaters mobile application.
 
-To run this application, use "node app.js".
+At Picky Eaters, we've encountered the following scenario day in and day out.
 
-To run the crappy demo: Use "node app.js", then hit the /swoog endpoint using Postman/Advanced Rest Client/the browser. This'll dump some fake data into the database. Then, run "node testClientCaptain.js" to start the Captain's process, and "node testClientGroupMember" to start the group member's process. The group will then randomly veto restaurants round-robin until there is only one restaurant left.
+Friend 1: Where do you guys want to eat?
+Friend 2: How about X?
+Friend 3: Nah, how about Y?
+Friend 4: No but Z has a deal going on today.
+Friend 1: I'm not really feeling Z though, what else?
+Friend X: Ad nauseum.
 
-Make sure you manually delete the stuff inside sessions.db after it's done to cleanup, as there's currently no cleanup step.
+We wanted to create a system that helps users decide where to eat, and fast. Picky Eaters pulls nearby restaurants using Yelp, and each user is allocated a number of vetos such that when all are used up, only one restaurant will remain.
+
+Veto quickly! Once the session begins, anyone is allowed to veto whatever they want, as long as they have vetos remaining. What will be the last restaurant standing? Only you guys will know. And hopefully, you'll know quickly.
