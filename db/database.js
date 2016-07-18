@@ -224,7 +224,7 @@
 
 	};
 
-	var removeUserFromSessions = function removeUserFromSessions(userId) {
+	var removeUserFromSessions = function removeUserFromSessions(userId, callback) {
 
 		var session;
 		var updatedSessionUsers = [];
@@ -238,6 +238,11 @@
 			}
 			return foundUserId;
 		}}, function (error, docs) {
+
+			var removedUser;
+			var voteCount = 0;
+			var j = 0;
+
 			if (!error) {
 				if (docs.length === 1) {
 					session = docs[0];
@@ -246,11 +251,32 @@
 						if (session.users[i].id !== userId) {
 							updatedSessionUsers.push(session.users[i]);
 						}
+						else {
+							removedUser = session.users[i];
+						}
 					}
 
+					//Redistribute remaining votes
+					while (voteCount !== (removedUser.votesAssigned - removedUser.votesUsed) && updatedSessionUsers.length !== 0) {
+						if (j === updatedSessionUsers.length) {
+							j = 0;
+						} 
+
+						updatedSessionUsers[j].votesAssigned = updatedSessionUsers[j].votesAssigned + 1;
+
+						j++;
+						voteCount++;
+					}
+
+					//Update database
 					db.update({_id: session._id}, {$set: {"users": updatedSessionUsers}}, {"returnUpdatedDocs" : true}, 
 						function(error, numAffected, affectedDoc) {
 							if (!error && numAffected === 1) {
+
+								if (removedUser.votesAssigned - removedUser.votesUsed !== 0) {
+									callback(updatedSessionUsers);						
+								}
+
 								if (affectedDoc.users.length === 0) {
 									console.log('Room ' + affectedDoc._id + ' has no more users and will be removed.');
 									db.remove({_id: affectedDoc._id});

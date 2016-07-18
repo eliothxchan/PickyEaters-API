@@ -101,7 +101,11 @@
 
 		module.handleDisconnect = function handleDisconnect(socket) {
 			console.log(socket.id + " disconnected.");
-			db.removeUserFromSessions(socket.id);
+			db.removeUserFromSessions(socket.id, function (updatedUsers) {
+				for (var i = 0; i < updatedUsers.length; i++) {
+					socketEmitter.emit(updatedUsers[i].id, 'votesReassigned', updatedUsers[i].votesAssigned);
+				}
+			});
 		};
 	
 
