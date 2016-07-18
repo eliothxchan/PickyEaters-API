@@ -104,6 +104,7 @@
 			db.removeUserFromSessions(socket.id, function (updatedUsers) {
 				for (var i = 0; i < updatedUsers.length; i++) {
 					socketEmitter.emit(updatedUsers[i].id, 'votesReassigned', updatedUsers[i].votesAssigned);
+					console.log(updatedUsers[i].id + '\'s votes reassigned. They now have ' + updatedUsers[i].votesAssigned + ' votes.');
 				}
 			});
 		};
