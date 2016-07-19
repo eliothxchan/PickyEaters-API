@@ -110,6 +110,8 @@
 							}
 						}
 
+						incrementUserUsedVotes(userId, sessionId);
+
 						db.update({_id: sessionId}, {$set: {restaurants: updatedRestaurants}}, {}, function(error, numAffected) {
 							if (!error) {
 								if (numAffected === 0) {
@@ -151,6 +153,7 @@
 							votesUsed: session.users[i].votesUsed + 1,
 							votesAssigned: session.users[i].votesAssigned
 						});
+						console.log(userId + ' updated number of vetos used to ' + (session.users[i].votesUsed + 1));
 					}
 					else {
 						updatedUserArray.push(session.users[i]);
@@ -274,6 +277,7 @@
 							if (!error && numAffected === 1) {
 
 								if (removedUser.votesAssigned - removedUser.votesUsed !== 0) {
+									console.log(userId + ' had votes remaining. These are redistributed to the other users.');
 									callback(updatedSessionUsers);						
 								}
 

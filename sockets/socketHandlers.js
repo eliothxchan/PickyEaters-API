@@ -103,8 +103,10 @@
 			console.log(socket.id + " disconnected.");
 			db.removeUserFromSessions(socket.id, function (updatedUsers) {
 				for (var i = 0; i < updatedUsers.length; i++) {
-					socketEmitter.emit(updatedUsers[i].id, 'votesReassigned', updatedUsers[i].votesAssigned-updatedUsers[i].votesUsed);
-					console.log(updatedUsers[i].id + '\'s votes reassigned. They now have ' + updatedUsers[i].votesAssigned-updatedUsers[i].votesUsed + ' votes left.');
+					console.log(typeof updatedUsers[i].votesAssigned);
+					console.log(typeof updatedUsers[i].votesUsed);
+					socketEmitter.emit(updatedUsers[i].id, 'votesReassigned', (updatedUsers[i].votesAssigned-updatedUsers[i].votesUsed));
+					console.log(updatedUsers[i].id + '\'s votes reassigned. They now have ' + (updatedUsers[i].votesAssigned-updatedUsers[i].votesUsed) + ' votes left.');
 				}
 			});
 		};
